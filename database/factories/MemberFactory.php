@@ -2,22 +2,27 @@
 
 namespace Database\Factories;
 
+use App\Models\Member;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
- */
 class MemberFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Member::class;
+
     public function definition(): array
     {
+        $age = $this->faker->numberBetween(18, 80);
+
         return [
-            //
+            'first_name'     => $this->faker->firstName,
+            'surname'        => $this->faker->lastName,
+            'phone'          => $this->faker->phoneNumber,
+            'email'          => $this->faker->unique()->safeEmail,
+            'address'        => $this->faker->address,
+            'home_address'   => $this->faker->streetAddress,
+            'profession'     => $this->faker->jobTitle,
+            'age'            => $age,
+            'group'          => $this->faker->randomElement(['Group A', 'Group B', 'Group C']),
         ];
     }
 }
