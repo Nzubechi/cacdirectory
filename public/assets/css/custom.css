@@ -1,0 +1,69 @@
+ :root {
+            --custom-bg: #f8f9fa;
+            --custom-text: #212529;
+            --custom-card-bg: #ffffff;
+            --custom-btn: #2575fc;
+            --custom-alert-success: #d4edda;
+        }
+
+        [data-theme="dark"] {
+            --custom-bg: #181a1b;
+            --custom-text: #e0e0e0;
+            --custom-card-bg: #1f2122;
+            --custom-btn: #3399ff;
+            --custom-alert-success: #2e7d32;
+        }
+
+        body {
+            background-color: var(--custom-bg);
+            color: var(--custom-text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .auth-card {
+            max-width: 500px;
+            margin: 60px auto;
+            background-color: var(--custom-card-bg);
+            color: var(--custom-text);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease;
+        }
+
+        .btn-custom {
+            background-color: var(--custom-btn);
+            color: white;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: darken(var(--custom-btn), 10%);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 1.25rem;
+        }
+
+        .alert-success {
+            background-color: var(--custom-alert-success);
+            color: #155724;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        .theme-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container-body {
+            padding: 2rem;
+        }
