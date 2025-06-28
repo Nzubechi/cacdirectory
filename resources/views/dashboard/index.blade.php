@@ -10,6 +10,28 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
+<!-- Filter + Search Form -->
+<form method="GET" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" class="form-control" value="{{ request('search') }}" placeholder="Search name, email, phone...">
+    </div>
+    <div class="col-md-3">
+        <select name="group" class="form-select">
+            <option value="">All Groups</option>
+            @foreach ($groups as $group)
+                <option value="{{ $group }}" {{ request('group') == $group ? 'selected' : '' }}>{{ $group }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ route('members.index') }}" class="btn btn-outline-light w-100">Reset</a>
+    </div>
+</form>
+
+<!-- Table -->
 <div class="card shadow-sm p-3">
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle text-center">
@@ -32,7 +54,7 @@
             <tbody>
                 @forelse ($members as $index => $member)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $members->firstItem() + $index }}</td>
                         <td>{{ $member->first_name }}</td>
                         <td>{{ $member->surname }}</td>
                         <td>{{ $member->phone }}</td>
@@ -56,6 +78,11 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+
+    <!-- Pagination Links -->
+    <div class="mt-3">
+        {{ $members->links() }}
     </div>
 </div>
 @endsection

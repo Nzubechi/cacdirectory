@@ -11,7 +11,7 @@ class MemberFactory extends Factory
 
     public function definition(): array
     {
-        $age = $this->faker->numberBetween(18, 80);
+        // $age = $this->faker->numberBetween(18, 80);
 
         return [
             'first_name'     => $this->faker->firstName,
@@ -21,7 +21,7 @@ class MemberFactory extends Factory
             'address'        => $this->faker->address,
             'home_address'   => $this->faker->streetAddress,
             'profession'     => $this->faker->jobTitle,
-            'age'            => $age,
+            'dob'            => $this->faker->dateTimeBetween('-80 years', '-18 years')->format('Y-m-d'),
             'group'          => $this->faker->randomElement(['Group A', 'Group B', 'Group C']),
         ];
     }
