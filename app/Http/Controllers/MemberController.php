@@ -4,40 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use Illuminate\Http\Request;
+use App\Services\MemberSearchService;
 
 
 class MemberController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, MemberSearchService $searchService)
     {
-        $query = Member::query();
-
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('surname', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('profession', 'like', "%{$search}%")
-                    ->orWhere('group', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->filled('group')) {
-            $query->where('group', $request->input('group'));
-        }
-
-        if ($request->input('age') === 'below60') {
-            $query->whereDate('dob', '>', now()->subYears(60));
-        } elseif ($request->input('age') === 'above60') {
-            $query->whereDate('dob', '<=', now()->subYears(60));
-        }
-
-        // ✅ Must use paginate() before withQueryString()
-        $members = $query->latest()->paginate(10)->appends(request()->query());
-        $members = $query->latest()->paginate(10);
-
+        $members = $searchService->apply($request);
         $groups = Member::select('group')->distinct()->pluck('group');
 
         return view('members.index', compact('members', 'groups'));
@@ -51,22 +25,28 @@ class MemberController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'first_name' => 'required',
-            'surname' => 'required',
-            'phone' => 'required',
-            'email' => 'required|email|unique:members',
-            'address' => 'required',
-            'home_address' => 'required',
-            'profession' => 'required',
-            'age' => 'required|integer',
-            'group' => 'nullable',
+        // Step 1: Validate inputs
+        $validated = $request->validate([
+            'first_name' => 'required|string',
+            'surname' => 'required|string',
+            'phone' => 'required|string',
+            'email' => 'required|email|unique:members,email',
+            'home_address' => 'required|string',
+            'profession' => 'required|string',
+            'dob' => 'required|date',
+            'group' => 'nullable|string',
+            'department' => 'nullable|string',
+            'class' => 'nullable|string',
+            'remark' => 'nullable|string',
+            'gender' => 'nullable|string|in:Male,Female',
         ]);
-
-        Member::create($request->all());
+        // Step 3: Create member
+        Member::create($validated);
 
         return redirect()->route('members.index')->with('success', 'Member added successfully.');
     }
+
+
 
     public function edit(Member $member)
     {
@@ -75,22 +55,28 @@ class MemberController extends Controller
 
     public function update(Request $request, Member $member)
     {
-        $request->validate([
-            'first_name' => 'required',
-            'surname' => 'required',
-            'phone' => 'required',
+        // Step 1: Validate inputs
+        $validated = $request->validate([
+            'first_name' => 'required|string',
+            'surname' => 'required|string',
+            'phone' => 'required|string',
             'email' => 'required|email|unique:members,email,' . $member->id,
-            'address' => 'required',
-            'home_address' => 'required',
-            'profession' => 'required',
-            'age' => 'required|integer',
-            'group' => 'nullable',
+            'home_address' => 'nullable|string',
+            'profession' => 'nullable|string',
+            'dob' => 'required|date',
+            'group' => 'nullable|string',
+            'department' => 'nullable|string',
+            'class' => 'nullable|string',
+            'remark' => 'nullable|string',
+            'gender' => 'nullable|string|in:Male,Female',
         ]);
-
-        $member->update($request->all());
+        // Step 3: Update the member
+        $member->update($validated);
 
         return redirect()->route('members.index')->with('success', 'Member updated successfully.');
     }
+
+
 
     public function destroy(Member $member)
     {

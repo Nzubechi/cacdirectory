@@ -16,11 +16,14 @@ return new class extends Migration {
             $table->string('surname');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->string('address')->nullable();
-            $table->string('home_address')->nullable();
+            $table->text('home_address')->nullable();
             $table->string('profession')->nullable();
             $table->date('dob')->nullable();
+            $table->string('gender')->nullable();
             $table->string('group')->nullable();
+            $table->string('department')->nullable();
+            $table->string('class')->nullable();
+            $table->text('remark')->nullable();
             $table->timestamps();
         });
     }

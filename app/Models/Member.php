@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Member extends Model
 {
@@ -14,20 +15,37 @@ class Member extends Model
         'surname',
         'phone',
         'email',
-        'address',
         'home_address',
         'profession',
         'dob',
+        'gender',
         'group',
+        'department',
+        'class',
+        'remark',
     ];
 
-    protected $dates = ['dob'];
     protected $casts = [
         'dob' => 'date',
     ];
-
     public function getAgeAttribute()
     {
-        return $this->dob ? $this->dob->age : null;
+        return $this->dob ? Carbon::parse($this->dob)->age : null;
+    }
+
+    public function getAgeBracketAttribute()
+    {
+        $age = $this->age;
+
+        return is_null($age) ? null : ($age < 60 ? 'Below 60' : '60 and Above');
+    }
+
+    public function getBirthdayTodayAttribute(): bool
+    {
+        if (!$this->dob) {
+            return false;
+        }
+
+        return $this->dob->isBirthday(); // Laravel/Carbon built-in
     }
 }
