@@ -22,8 +22,7 @@ class MemberSearchService
                     ->orWhere('profession', 'like', "%{$search}%")
                     ->orWhere('group', 'like', "%{$search}%")
                     ->orWhere('department', 'like', "%{$search}%")
-                    ->orWhere('class', 'like', "%{$search}%")
-                    ->orWhere('age_bracket', 'like', "%{$search}%");
+                    ->orWhere('class', 'like', "%{$search}%");
             });
         }
 
