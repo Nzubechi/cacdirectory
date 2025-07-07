@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="mb-4 d-flex justify-content-between align-items-center">
-        <h2 class="fw-bold">Members</h2>
+        <h2 class="fw-bold text-white">Members</h2>
         <a href="{{ route('members.create') }}" class="btn btn-custom btn-sm">+ Add Member</a>
     </div>
 
@@ -82,12 +82,14 @@
                         <th>PHONE NO</th>
                         <th>EMAIL</th>
                         <th>PROFESSION/BUSINESS</th>
-                        {{-- <th>AGE < 60</th>
-                        <th>AGE ≥ 60</th> --}}
+                        <th>GENDER </th>
+                        <th>DOB</th>
+                        <th>HOME ADDRESS</th>
                         <th>GROUP</th>
                         <th>AGE BRACKET</th>
                         <th>DEPARTMENT</th>
                         <th>CLASS</th>
+                        <th>REMARKS</th>
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
@@ -96,24 +98,25 @@
                         <tr>
                             <td>{{ $members->firstItem() + $index }}</td>
                             <td>{{ $member->first_name . ' ' . $member->surname }}
-
-                                @if ($member->gender === 'Male')
+                                {{-- @if ($member->gender === 'Male')
                                     <span class="badge bg-primary"><i class="fas fa-mars me-1"></i> Male</span>
                                 @elseif ($member->gender === 'Female')
                                     <span class="badge bg-warning text-white"><i class="fas fa-venus me-1"></i> Female</span>
                                 @else
                                     <span class="badge bg-secondary"><i class="fas fa-genderless me-1"></i> N/A</span>
-                                @endif
+                                @endif --}}
                             </td>
                             <td>{{ $member->phone }}</td>
                             <td>{{ $member->email }}</td>
                             <td>{{ $member->profession }}</td>
-                            {{-- <td>{{ $member->age < 60 ? '✔️' : '' }}</td>
-                            <td>{{ $member->age >= 60 ? '✔️' : '' }}</td> --}}
+                            <td>{{ $member->gender }} </td>
+                            <td>{{ \Carbon\Carbon::parse($member->dob)->format('jS F, Y') }}</td>
+                            <td>{{ $member->home_address }}</td>
                             <td>{{ $member->group }}</td>
                             <td>{{ $member->age . ' yrs' }} - {{ $member->age < 60 ? 'Under 60' : 'Over 60' }}</td>
                             <td>{{ $member->department }}</td>
                             <td>{{ $member->class ?? 'N/A' }}</td>
+                            <td>{{ $member->remark ?? 'N/A' }}</td>
                             <td class="text-nowrap">
                                 <a href="{{ route('members.edit', $member) }}" class="btn btn-sm btn-outline-primary"
                                     title="Edit">
