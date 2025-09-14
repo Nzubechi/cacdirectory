@@ -19,9 +19,12 @@ return new class extends Migration {
             $table->text('home_address')->nullable();
             $table->string('profession')->nullable();
             $table->date('dob')->nullable();
+            $table->integer('dob_day')->nullable();
+            $table->integer('dob_month')->nullable();
+            $table->integer('dob_year')->nullable();
             $table->string('gender')->nullable();
             $table->string('group')->nullable();
-            $table->string('department')->nullable();
+            $table->text('department')->nullable();
             $table->string('class')->nullable();
             $table->text('remark')->nullable();
             $table->timestamps();

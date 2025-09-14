@@ -22,6 +22,12 @@
                     </div>
 
                     <div class="col-md-4">
+                        <label class="form-label">Department(s)</label>
+                        <input type="text" name="department" class="form-control" value="{{ request('department') }}"
+                            placeholder="Department">
+                    </div>
+
+                    <div class="col-md-4">
                         <label class="form-label">Group</label>
                         <select name="group" class="form-select">
                             <option value="">All Groups</option>

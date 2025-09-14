@@ -21,7 +21,13 @@
                             placeholder="Name, Email, Phone, Profession, etc">
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Department(s)</label>
+                        <input type="text" name="department" class="form-control" value="{{ request('department') }}"
+                            placeholder="Department">
+                    </div>
+
+                    <div class="col-md-4">
                         <label class="form-label">Group</label>
                         <select name="group" class="form-select">
                             <option value="">All Groups</option>
@@ -33,7 +39,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label">Age Category</label>
                         <select name="age" class="form-select">
                             <option value="">All Ages</option>
@@ -43,7 +49,7 @@
                         </select>
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <label class="form-label">Gender</label>
                         <select name="gender" class="form-select">
                             <option value="">All Genders</option>
@@ -110,10 +116,23 @@
                             <td>{{ $member->email }}</td>
                             <td>{{ $member->profession }}</td>
                             <td>{{ $member->gender }} </td>
-                            <td>{{ \Carbon\Carbon::parse($member->dob)->format('jS F, Y') }}</td>
+                            <td>
+                                @if (\Carbon\Carbon::parse($member->dob)->year != 1900)
+                                    {{ \Carbon\Carbon::parse($member->dob)->format('jS F, Y') }}
+                                @else
+                                    {{ \Carbon\Carbon::parse($member->dob)->format('jS F') }}
+                                @endif
+                            </td>
                             <td>{{ $member->home_address }}</td>
                             <td>{{ $member->group }}</td>
-                            <td>{{ $member->age . ' yrs' }} - {{ $member->age < 60 ? 'Under 60' : 'Over 60' }}</td>
+                            <td>
+                                @if (\Carbon\Carbon::parse($member->dob)->year != 1900)
+                                    {{ $member->age . ' yrs' }} -
+                                    {{ $member->age < 60 ? 'Under 60' : 'Over 60' }}
+                                @else
+                                    {{ 'Undefined Age' }}
+                                @endif
+                            </td>
                             <td>{{ $member->department }}</td>
                             <td>{{ $member->class ?? 'N/A' }}</td>
                             <td>{{ $member->remark ?? 'N/A' }}</td>

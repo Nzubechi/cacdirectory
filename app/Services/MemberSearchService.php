@@ -27,6 +27,11 @@ class MemberSearchService
         }
 
         // Group filter
+        if ($request->filled('department')) {
+            $query->where('department', 'LIKE', '%' . $request->input('department') . '%');
+        }
+
+        // Group filter
         if ($request->filled('group')) {
             $query->where('group', $request->input('group'));
         }
