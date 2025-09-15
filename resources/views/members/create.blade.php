@@ -10,7 +10,7 @@
     <form method="POST" action="{{ route('members.store') }}">
         @csrf
         @include('members.partials.form', ['member' => null])
-        <button type="submit" class="btn btn-custom mt-3">Save Member</button>
+        <button type="submit" class="btn btn-primary mt-3">Save Member</button>
     </form>
 </div>
 @endsection
