@@ -131,6 +131,14 @@ class MemberController extends Controller
             'gender' => 'nullable|string|in:Male,Female',
         ]);
 
+        // Step 2: Get the numeric value for the month
+        $month = $this->getMonthNumericValue($request->dob_month);
+
+        // Handle invalid month or return an error
+        if ($month === null) {
+            return back()->withErrors(['dob_month' => 'Invalid month selected.']);
+        }
+
         // Step 2: Build the full DOB and individual date components
         $dob = $this->formatDob($request);
 
@@ -138,7 +146,7 @@ class MemberController extends Controller
         $member->update(array_merge($validated, [
             'dob' => $dob,  // Full date
             'dob_day' => $request->dob_day,
-            'dob_month' => $request->dob_month,
+            'dob_month' => $month,
             'dob_year' => $request->dob_year,
         ]));
 
