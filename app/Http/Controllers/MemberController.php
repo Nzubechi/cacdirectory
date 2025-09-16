@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Services\MemberSearchService;
 
 
@@ -12,16 +13,17 @@ class MemberController extends Controller
 {
     public function index(Request $request, MemberSearchService $searchService)
     {
+        $departments = DB::table('department_selection')->get();
         $members = $searchService->apply($request);
         $groups = Member::select('group')->distinct()->pluck('group');
 
-        return view('members.index', compact('members', 'groups'));
+        return view('members.index', compact('members', 'groups', 'departments'));
     }
 
     public function create()
     {
-
-        return view('members.create');
+        $departments = DB::table('department_selection')->get();
+        return view('members.create', compact('departments'));
     }
 
     public function store(Request $request)
@@ -38,7 +40,7 @@ class MemberController extends Controller
             'dob_month' => 'nullable|string|in:January,February,March,April,May,June,July,August,September,October,November,December',
             'dob_year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'group' => 'nullable|string',
-            'department' => 'nullable|string',
+            'department' => 'nullable|array', // Validate department as an array
             'class' => 'nullable|string',
             'remark' => 'nullable|string',
             'gender' => 'nullable|string|in:Male,Female',
@@ -55,16 +57,68 @@ class MemberController extends Controller
         // Step 3: Build the full DOB in YYYY-MM-DD format
         $dob = $this->formatDob($request);
 
-        // Step 4: Create the member with the DOB and individual date components
+        // Step 4: Convert the selected departments into a comma-separated string
+        $departments = $request->filled('departments') ? implode(',', $request->departments) : null;
+
+        // Step 5: Create the member with the DOB and individual date components
         Member::create(array_merge($validated, [
             'dob' => $dob,  // Full date
             'dob_day' => $request->dob_day,
             'dob_month' => $month,  // Store numeric month
             'dob_year' => $request->dob_year ?: 1900,
+            'department' => $departments,  // Store departments as comma-separated list
         ]));
 
         return redirect()->route('members.index')->with('success', 'Member added successfully.');
     }
+
+
+    public function update(Request $request, Member $member)
+    {
+        // Step 1: Validate the inputs
+        $validated = $request->validate([
+            'first_name' => 'required|string',
+            'surname' => 'required|string',
+            'phone' => 'required|string',
+            'email' => 'nullable|email|unique:members,email,' . $member->id,
+            'home_address' => 'nullable|string',
+            'profession' => 'nullable|string',
+            'dob_day' => 'nullable|integer|min:1|max:31',
+            'dob_month' => 'nullable|string|in:January,February,March,April,May,June,July,August,September,October,November,December',
+            'dob_year' => 'nullable|integer|min:1900|max:' . date('Y'),
+            'group' => 'nullable|string',
+            'department' => 'nullable|array', // Validate department as an array
+            'class' => 'nullable|string',
+            'remark' => 'nullable|string',
+            'gender' => 'nullable|string|in:Male,Female',
+        ]);
+
+        // Step 2: Get the numeric value for the month
+        $month = $this->getMonthNumericValue($request->dob_month);
+
+        // Handle invalid month or return an error
+        if ($month === null) {
+            return back()->withErrors(['dob_month' => 'Invalid month selected.']);
+        }
+
+        // Step 3: Build the full DOB in YYYY-MM-DD format
+        $dob = $this->formatDob($request);
+
+        // Step 4: Convert the selected departments into a comma-separated string
+       $departments = $request->filled('departments') ? implode(',', $request->departments) : null;
+
+        // Step 5: Update the member with the new DOB, individual date components, and departments
+        $member->update(array_merge($validated, [
+            'dob' => $dob,  // Full date
+            'dob_day' => $request->dob_day,
+            'dob_month' => $month,
+            'dob_year' => $request->dob_year ?: 1900,
+            'department' => $departments,  // Update departments as comma-separated list
+        ]));
+
+        return redirect()->route('members.index')->with('success', 'Member updated successfully.');
+    }
+
 
     // Helper function to convert month name to numeric value
     private function getMonthNumericValue($monthName)
@@ -108,52 +162,9 @@ class MemberController extends Controller
 
     public function edit(Member $member)
     {
-        return view('members.edit', compact('member'));
+        $departments = DB::table('department_selection')->get();
+        return view('members.edit', compact('member', 'departments'));
     }
-
-    public function update(Request $request, Member $member)
-    {
-        // Step 1: Validate the inputs
-        $validated = $request->validate([
-            'first_name' => 'required|string',
-            'surname' => 'required|string',
-            'phone' => 'required|string',
-            'email' => 'nullable|email|unique:members,email,' . $member->id,
-            'home_address' => 'nullable|string',
-            'profession' => 'nullable|string',
-            'dob_day' => 'nullable|integer|min:1|max:31',
-            'dob_month' => 'nullable|string|in:January,February,March,April,May,June,July,August,September,October,November,December',
-            'dob_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'group' => 'nullable|string',
-            'department' => 'nullable|string',
-            'class' => 'nullable|string',
-            'remark' => 'nullable|string',
-            'gender' => 'nullable|string|in:Male,Female',
-        ]);
-
-        // Step 2: Get the numeric value for the month
-        $month = $this->getMonthNumericValue($request->dob_month);
-
-        // Handle invalid month or return an error
-        if ($month === null) {
-            return back()->withErrors(['dob_month' => 'Invalid month selected.']);
-        }
-
-        // Step 2: Build the full DOB and individual date components
-        $dob = $this->formatDob($request);
-
-        // Step 3: Update the member
-        $member->update(array_merge($validated, [
-            'dob' => $dob,  // Full date
-            'dob_day' => $request->dob_day,
-            'dob_month' => $month,
-            'dob_year' => $request->dob_year,
-        ]));
-
-        return redirect()->route('members.index')->with('success', 'Member updated successfully.');
-    }
-
-
 
     public function destroy(Member $member)
     {

@@ -23,9 +23,20 @@
 
                     <div class="col-md-4">
                         <label class="form-label">Department(s)</label>
-                        <input type="text" name="department" class="form-control" value="{{ request('department') }}"
-                            placeholder="Department">
+                        <select name="department" class="form-select @error('department') is-invalid @enderror">
+                            <option value="">Select Department</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->id }}"
+                                    {{ old('department', request('department')) == $department->id ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('department')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+
 
                     <div class="col-md-4">
                         <label class="form-label">Group</label>
@@ -133,7 +144,7 @@
                                     {{ 'Undefined Age' }}
                                 @endif
                             </td>
-                            <td>{{ $member->department }}</td>
+                            <td>{{ $member->department_names }}</td>
                             <td>{{ $member->class ?? 'N/A' }}</td>
                             <td>{{ $member->remark ?? 'N/A' }}</td>
                             <td class="text-nowrap">

@@ -24,9 +24,9 @@ return new class extends Migration {
 
         DB::table('users')->insert([
             'name' => 'CAC Admin',
-            'email' => 'admin@cacokeigbalaketu.org',
+            'email' => 'admin@cacapp.org',
             'email_verified_at' => now(),
-            'password' => Hash::make('cacpassword@123'),
+            'password' => Hash::make('Password123'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
