@@ -37,15 +37,16 @@
          @enderror
      </div>
 
-     <!-- Phone -->
      <div class="col-md-6">
          <label class="form-label">Phone</label>
-         <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"
-             value="{{ old('phone', optional($member)->phone) }}">
+         <input type="tel" name="phone" class="form-control @error('phone') is-invalid @enderror"
+             value="{{ old('phone', optional($member)->phone) }}" pattern="\d{1,13}" maxlength="13"
+             placeholder="Enter phone number (max 13 digits)" />
          @error('phone')
              <div class="invalid-feedback">{{ $message }}</div>
          @enderror
      </div>
+
 
      <!-- Email -->
      <div class="col-md-6">
