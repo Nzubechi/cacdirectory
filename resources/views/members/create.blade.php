@@ -7,7 +7,7 @@
         <a href="{{ route('members.index') }}" class="btn btn-outline-secondary">Cancel</a>
     </div>
 
-    <form method="POST" action="{{ route('members.store') }}">
+    <form id="member-create-form" method="POST" action="{{ route('members.store') }}">
         @csrf
         @include('members.partials.form', ['member' => null])
         <button type="submit" class="btn btn-primary mt-3">Save Member</button>

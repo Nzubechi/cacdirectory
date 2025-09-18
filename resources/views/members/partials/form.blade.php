@@ -172,14 +172,17 @@
              @foreach ($departments as $department)
                  <div class="form-check form-check-inline">
                      <input type="checkbox" name="departments[]" value="{{ $department->id }}" class="form-check-input"
-                         @if (in_array($department->id, explode(',', old('departments', optional($member)->department ?? '')))) checked @endif>
-                     <label class="form-check-label">{{ $department->name }}</label>
+                         id="department_{{ $department->id }}" @if (in_array($department->id, explode(',', old('departments', optional($member)->department ?? '')))) checked @endif>
+                     <label class="form-check-label"
+                         for="department_{{ $department->id }}">{{ $department->name }}</label>
                  </div>
              @endforeach
          </div>
          @error('departments')
              <div class="invalid-feedback">{{ $message }}</div>
          @enderror
+         <div id="department-error" class="invalid-feedback" style="display: none;">Please select at least one
+             department.</div>
      </div>
 
 
@@ -266,4 +269,34 @@
              updateGroupOptions(selectedGender);
          }
      });
+ </script>
+
+ <!-- JS to confirm if at least one department checkbox is ticked -->
+ <script>
+     // Function to check if at least one checkbox is selected
+     function validateDepartments(event) {
+        console.log("Running Dept Validation...");
+
+         const checkboxes = document.querySelectorAll('input[name="departments[]"]');
+         let isChecked = false;
+
+         // Loop through checkboxes to check if at least one is checked
+         checkboxes.forEach(function(checkbox) {
+             if (checkbox.checked) {
+                 isChecked = true;
+             }
+         });
+
+         // If no checkbox is checked, show error and prevent form submission
+         if (!isChecked) {
+             event.preventDefault(); // Prevent form submission
+             document.getElementById('department-error').style.display = 'block'; // Show error message
+         } else {
+             document.getElementById('department-error').style.display = 'none'; // Hide error message
+         }
+     }
+
+     // Attach the submit event listener to both forms
+     document.getElementById('member-create-form')?.addEventListener('submit', validateDepartments);
+     document.getElementById('member-edit-form')?.addEventListener('submit', validateDepartments);
  </script>

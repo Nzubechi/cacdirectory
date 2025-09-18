@@ -7,7 +7,7 @@
         <a href="{{ route('members.index') }}" class="btn btn-outline-secondary">Cancel</a>
     </div>
 
-    <form method="POST" action="{{ route('members.update', $member) }}">
+    <form id="member-edit-form" method="POST" action="{{ route('members.update', $member) }}">
         @csrf
         @method('PUT')
         @include('members.partials.form', ['member' => $member])
